@@ -1,0 +1,425 @@
+<html>
+    <head>
+        <!-- add title of page and ajax/bootstrap functionality -->
+        <title> View Dublin Bus Stops & Routes</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+       
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    
+        <!-- add CSS/Javascript styling -->
+
+    <style type="text/css">
+        * {font-family:Calibri, Arial, Times new roman}
+        html { overflow-y: scroll; }
+        body    {background-image: url("images/forest.jpg");   
+                background-repeat:repeat-y;
+                background-size: 1500px;
+                }
+        .button {
+                margin: 30px;}
+        .search{
+                position:absolute;
+                background-color: rgba(228, 220, 112, 0.8);
+                width: 500px;
+                height: 130px;
+                right: 0;
+	            padding: 7px;
+                margin: 45px;}   
+        .Ltable{
+                position:float;
+                left: 0;
+                text-align:Center;
+                font-weight:normal;}
+        .refresh{ 
+                z-index: -1;
+                left: 0;
+                text-align:Center}        
+        .tablestyle {
+                margin: 30px;
+	            color: rgba(16, 16, 16);
+	            background-color: rgba(200, 200, 200, 0.8);
+	            padding: 10px;
+            	font-weight:bold;
+	            text-align:Center; 
+	    }
+        .stopName {
+                background-color: red;
+                position: float;
+                margin: 30px;
+	            color: rgba(16, 16, 16);
+	            padding: 10px;
+            	font-weight:bold;
+                text-align:Center;}
+   
+    </style>
+    <body>
+            <!-- create thebody of the page with a divcontaining the live bus information -->
+        <div class="search" style="border: 1px solid black;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Select from your Favourite Bus Stop Numbers -><select id="Stop" style="float: right;">
+            <option value="235">Stop 235</option>
+            <option value="15">Stop 15</option>
+            <option value="810">Stop 810</option>
+            </select>
+            <table class="Ltable" id="liveTable" style="table-layout: fixed;">
+                    <tr id="liveHeader">
+                            <th width=10>Route</th>
+                            <th width=10>Destination</th>
+                            <th width=10>Due</th>
+                            <th>&nbsp;&nbsp;Current Stop No.&nbsp;&nbsp;</th>
+                            <th>&nbsp;&nbsp;Current Stop Name&nbsp;&nbsp;</th>
+                           
+                    </tr>
+                    <tr id="liveRow1">
+                        <th id="liveRow1a">row1</th>
+                        <th id="liveRow1b">row1</th>
+                        <th id="liveRow1c">row1</th>
+                        <th id="liveRow1d">row1</th>
+                        <th id="liveRow1e">Loading...</th>
+
+                    </tr>
+                    <tr id="liveRow2">
+                        <th id="liveRow2a">row2</th>
+                        <th id="liveRow2b">row2</th>
+                        <th id="liveRow2c">row2</th>
+                        <th id="liveRow2d"></th>
+                        <th rowspan="2" id="liveRow2e"><button class="refresh" type="submit" id="refreshButton" onclick="liveRefresh()">Refresh Live Data</button></th>
+                    </tr>
+                    <tr id="liveRow3">
+                        <th id="liveRow3a">row3</th>
+                        <th id="liveRow3b">row3</th>
+                        <th id="liveRow3c">row3</th>
+                        <th id="liveRow3d"></th>
+                        <th id="liveRow3e"></th>
+                    </tr>
+                    
+                </table>
+                
+            <!-- a div with the page title and button to create new bus entries -->
+        </div>
+        <h1>Dublin Bus Stops & RealTime Info</h1>
+        
+        <div> <button id="showCreateButton" class="button" onclick="showCreate()">Create New Bus Stop</button>
+              </br>
+        </div>
+        
+            <!-- a div containing the main table of bus stop information -->
+
+        <div class="tablestyle">
+            <table id="busTable" >
+                <tr>
+                        <th width=100>StopID</th>
+                        <th width=100>Name</th>
+                        <th width=100>Routes</th>
+                        <th width=100>Update</th>
+                        <th width=100>Delete</th>
+                </tr>                
+            </table>
+        </div>
+        </br>
+        </br>
+        </br>
+        </br>
+        <div id='createUpdateForm' style="display:none" class = "tablestyle">
+                <h2><span id="createLabel">Create a</span> <span id="updateLabel">update</span> Bus</h2>
+                            StopID <input type="text" name="StopID"/> <br/>
+                            Name <input type="text" name="Name"/> <br/>
+                            Routes <input type="text" name="Routes"/> <br/>
+                <span><button id="doCreateButton" onclick="doCreate()">Create</button></span>
+                <span><button id="doUpdateButton" onclick="doUpdate()">Update</button></span>
+        </div>
+    </body>
+                    
+                <!-- scripting section then dictates how the above tables and divs will  -->
+                <!-- be populated and interact -->
+    <script>
+    function showCreate(){         //function to hide the "create form"
+        document.getElementById('showCreateButton').style.display="none"
+        document.getElementById('busTable').style.display="none"
+        document.getElementById('createUpdateForm').style.display="block"
+        document.getElementById('createLabel').style.display="inline"
+        document.getElementById('updateLabel').style.display="none"
+        document.getElementById('doCreateButton').style.display="block"
+        document.getElementById('doUpdateButton').style.display="none"
+    }
+    function showViewAll(){          //function to reveal the "create form"
+        document.getElementById('showCreateButton').style.display="block"
+        document.getElementById('busTable').style.display="block"
+        document.getElementById('createUpdateForm').style.display="none"
+    }
+    function showUpdate(buttonElement){   //function to return to hide the "create form"
+        document.getElementById('showCreateButton').style.display="none"
+        document.getElementById('busTable').style.display="none"
+        document.getElementById('createUpdateForm').style.display="block"
+        document.getElementById('createLabel').style.display="none"
+        document.getElementById('updateLabel').style.display="inline"
+        document.getElementById('doCreateButton').style.display="none"
+        document.getElementById('doUpdateButton').style.display="block"
+        var rowElement = buttonElement.parentNode.parentNode
+        // these is a way of finding the closest <tr> which would safer, closest()
+        
+        var bus = getBusFromRow(rowElement)
+        populateFormWithBus(bus)
+    }
+    function doCreate(){           //create and accept in userinput into the "create form"
+        var form = document.getElementById('createUpdateForm')
+        var bus = {}
+        bus.bus.StopID = form.querySelector('input[name="StopID"]').value
+        bus.Name = form.querySelector('input[name="Name"]').value
+        bus.Routes = form.querySelector('input[name="Routes"]').value
+        console.log(JSON.stringify(bus))
+        createBusAjax(bus)
+        addBusToTable(bus)
+        clearForm()
+        
+        showViewAll()
+    }
+    function doUpdate(){       //perform the updates on individual rows of the table 
+        var bus = getBusFromForm();
+        var rowElement = document.getElementById(bus.StopID);
+        updateBusAjax(bus);
+        setBusInRow(rowElement,bus);
+       
+        clearForm();
+        showViewAll();
+    }
+    function doDelete(r){     //perform a delete on individual rows of the table
+        var tableElement = document.getElementById('busTable');
+        var rowElement = r.parentNode.parentNode;
+        var index = rowElement.rowIndex;
+        deleteBusAjax(rowElement.getAttribute("id"));
+        tableElement.deleteRow(index);
+    }
+    function addBusToTable(bus){    //using the information from the ../bus page add the bus information to the table 
+        var tableElement = document.getElementById('busTable')
+        var rowElement = tableElement.insertRow(-1)
+        rowElement.setAttribute('id',bus.StopID)
+        var cell1 = rowElement.insertCell(0);
+        cell1.innerHTML = bus.StopID
+        var cell2 = rowElement.insertCell(1);
+        cell2.innerHTML = bus.Name
+        var cell3 = rowElement.insertCell(2);
+        cell3.innerHTML = bus.Routes
+        var cell5 = rowElement.insertCell(3);   //also add the buttons to be used to manupulate the data in each row
+        cell5.innerHTML = '<button onclick="showUpdate(this)">Update</button>'
+        var cell6 = rowElement.insertCell(4);
+        cell6.innerHTML = '<button onclick=doDelete(this)>delete</button>'
+    }
+    function clearForm(){   //remove the information from the create form once the values have been submitted/captured. 
+        var form = document.getElementById('createUpdateForm')
+        form.querySelector('input[name="StopID"]').disabled = false
+        form.querySelector('input[name="StopID"]').value  =''
+        form.querySelector('input[name="Name"]').value=''
+        form.querySelector('input[name="Routes"]').value=''
+    }
+    function getBusFromRow(rowElement){   //find the row that is applicable to the particulat change the user wished to make
+        var bus ={}
+        bus.StopID  = rowElement.cells[0].firstChild.textContent
+        bus.Name = rowElement.cells[1].firstChild.textContent
+        bus.Routes = rowElement.cells[2].firstChild.textContent
+        return bus
+    }
+    function setBusInRow(rowElement, bus){  //return changed information to the row after an update
+        rowElement.cells[0].firstChild.textContent= bus.StopID  
+        rowElement.cells[1].firstChild.textContent= bus.Name 
+        rowElement.cells[2].firstChild.textContent= bus.Routes
+    }
+    function populateFormWithBus(bus){   //during an update, populate the form with the existing information for that enrty
+        var form = document.getElementById('createUpdateForm')
+        form.querySelector('input[name="StopID"]').disabled = true
+        form.querySelector('input[name="StopID"]').value  = bus.StopID
+        form.querySelector('input[name="Name"]').value= bus.Name
+        form.querySelector('input[name="Routes"]').value= bus.Routes
+        return bus
+    }
+    function getBusFromForm(){   // retrieve input information from the form to add it to the table.
+        var form = document.getElementById('createUpdateForm')
+        var bus = {}
+        bus.StopID = form.querySelector('input[name="StopID"]').value
+        bus.Name = form.querySelector('input[name="Name"]').value
+        bus.Routes = form.querySelector('input[name="Routes"]').value
+        console.log(JSON.stringify(bus))
+        return bus
+    }
+    function getAllAjax(){  //retrieve [GET] the raw json information from the ../bus page and amend it into a format to go into the table
+        $.ajax({             
+            "url": "http://127.0.0.1:5000/bus",
+            "method":"GET",
+            "data":"",
+            "dataType": "JSON",
+            "success":function(result){
+                //console.log(result);
+                for (bus of result.bus){
+                    for (i in bus){
+                        addBusToTable(bus[i]);     //activate the function to add the data to the table
+                    }
+                }
+                
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+    function createBusAjax(bus){      //send [POST] the informatio nfor a new bus to the ../bus page where the raw data is held.
+        console.log(JSON.stringify(bus));
+        $.ajax({
+            "url": "http://127.0.0.1:5000/bus",
+            "method":"POST",
+            "data":JSON.stringify(bus),
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+                //console.log(result);
+                 
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+    function updateBusAjax(bus){     //amend [PUT] the data for a bus in the raw information in ../bus page
+        console.log(JSON.stringify(bus));
+        $.ajax({
+            "url": "http://127.0.0.1:5000/bus/"+encodeURI(bus.StopID),
+            "method":"PUT",
+            "data":JSON.stringify(bus),
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+               // console.log(result);
+                  
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+    function deleteBusAjax(StopID){  //delete [DELETE] the data for a bus in the raw information in ../bus page
+        console.log(JSON.stringify(bus));
+        $.ajax({
+            "url": "http://127.0.0.1:5000/bus/"+encodeURI(StopID),
+            "method":"DELETE",
+            "data":"",
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+                //console.log(result);
+                  
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+    function liveRefresh(){          ////////////////////////// REPEATING SIMILAR FUNCTIONS FOR THE LIVE DATA ////////////////////
+        $.ajax({
+            "url": "http://127.0.0.1:5000/live",  //get data from ../live page and add it to the liveTable - repeat below for 2 more bus stops (StopID)
+            "method":"GET",
+            "data":"",
+            "dataType": "JSON",
+            "success":function(result){
+
+                    var e = document.getElementById("Stop"); //source:https://stackoverflow.com/questions/1085801/get-selected-value-in-dropdown-list-using-javascript
+                    var x = e.options[e.selectedIndex].value;
+                    if (x == 235){
+                        //console.log(result.live);
+                        addLiveToTable(result.live);
+                        }
+                    else if (x == 15){liveRefresh1()}
+                    else {liveRefresh2()}
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+        }
+        function liveRefresh1(){          
+        $.ajax({
+            "url": "http://127.0.0.1:5000/live2",
+            "method":"GET",
+            "data":"",
+            "dataType": "JSON",
+            "success":function(result){
+                    
+                        x = document.getElementById('Stop').innerHTML ;
+                        addLiveToTable(result.live);
+            
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+
+
+    }
+    function liveRefresh2(){          
+        $.ajax({
+            "url": "http://127.0.0.1:5000/live3",
+            "method":"GET",
+            "data":"",
+            "dataType": "JSON",
+            "success":function(result){
+                    
+                        x = document.getElementById('Stop').innerHTML ;
+                        addLiveToTable(result.live);
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+
+    function addLiveToTable(live){  //in connection with the above functions, add thelive data to the live table
+        
+        document.getElementById('liveRow1a').innerHTML = live["0"]["Route"] //https://stackoverflow.com/questions/8513360/is-it-possible-to-replace-a-table-cell-without-deleting-it-with-javascript-or-jq
+        document.getElementById('liveRow1b').innerHTML = live["0"]["Destination"];
+        document.getElementById('liveRow1c').innerHTML = live["0"]["Duetime"];
+        var e = document.getElementById("Stop"); //source:https://stackoverflow.com/questions/1085801/get-selected-value-in-dropdown-list-using-javascript
+        var x = e.options[e.selectedIndex].value;
+        document.getElementById('liveRow1d').innerHTML = x;
+        
+        document.getElementById('liveRow2a').innerHTML = live["1"]["Route"], 
+        document.getElementById('liveRow2b').innerHTML = live["1"]["Destination"]; 
+        document.getElementById('liveRow2c').innerHTML = live["1"]["Duetime"];
+        
+        document.getElementById('liveRow3a').innerHTML = live["2"]["Route"] 
+        document.getElementById('liveRow3b').innerHTML = live["2"]["Destination"]; 
+        document.getElementById('liveRow3c').innerHTML = live["2"]["Duetime"];
+        
+        addLiveToTable2(x)
+        
+        }  
+    function addLiveToTable2(x){  //connected to the above, also add information from the ../bus page to the live table 
+        $.ajax({                     //as the Bus Stop Name associated with the Bus StopID is not available in the live data. 
+            "url": "http://127.0.0.1:5000/bus",  // NOTE this returns to BUS!!
+            "method":"GET",
+            "data":"",
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+                console.log(result.bus)
+                for (bus of result.bus){
+                     for (i in bus){
+                        if (bus[i]['StopID'] ==x){
+
+                        
+                        // console.log(,bus[i]['Name'],bus[i]['Routes'])
+                document.getElementById('liveRow1e').innerHTML = bus[i]['Name'];
+                        }
+                  
+            }}},
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+
+
+    getAllAjax();    //activate the following functions as the page opens
+    liveRefresh();
+
+  
+    
+    </script>
+</html>
