@@ -147,7 +147,7 @@ live3 = bbbb.to_dict('index')
 
 ######## SECTION 3 - SET UP OF APP ROUTE FOR LIVE DATA ########################################
 
-@app.route('/live', methods=['GET'])  # GET live data and 
+@app.route('/live', methods=['GET'])  # GET live data from ../live page
 def get_live():
     return jsonify( {'live':live})
 
@@ -159,11 +159,11 @@ def get_route(route):
     return jsonify( { 'route' : foundBus[:] })
 #curl -i http://localhost:5000/cars/test
 
-@app.route('/live2', methods=['GET'])
+@app.route('/live2', methods=['GET'])   # Repeated
 def get_live2():
     return jsonify( {'live':live2})
 
-@app.route('/live2/<string:route>', methods =['GET'])
+@app.route('/live2/<string:route>', methods =['GET']) 
 def get_route2(route):
     foundBus = list(filter(lambda t : t['route'] == route , live))
     if len(foundBus) == 0:
@@ -171,7 +171,7 @@ def get_route2(route):
     return jsonify( { 'route' : foundBus[:] })
 #curl -i http://localhost:5000/cars/test
 
-@app.route('/live3', methods=['GET'])
+@app.route('/live3', methods=['GET'])   # Repeated
 def get_live3():
     return jsonify( {'live':live3})
 
@@ -188,13 +188,13 @@ def get_route3(route):
 
 ###########################
 
-@app.route('/bus', methods=['GET']) #Function to reteieve information from the 
+@app.route('/bus', methods=['GET']) #Function to reteieve information from the ../bus page
 def get_bus():
     return jsonify( {'bus':bus})
 #curl -i http://localhost:5000/bus
 
 
-@app.route('/bus/<string:StopID>', methods =['GET']) # Function to store 
+@app.route('/bus/<string:StopID>', methods =['GET']) 
 def get_StopID(StopID):
     foundBus = list(filter(lambda t : t['StopID'] == StopID , bus))
     if len(foundBus) == 0:
@@ -204,25 +204,23 @@ def get_StopID(StopID):
 
 
 
-@app.route('/bus', methods=['POST'])
-def create_bus():
+@app.route('/bus', methods=['POST'])    # function to receive in the requested information to create a new bus stop
+def create_bus(): 
     if not request.json:
         abort(400)
     if not 'StopID' in request.json:
         abort(400)
-    bus1={
+    bus1={                                      # data formatted and...
         "StopID":  request.json['StopID'],
         "Name": request.json['Name'],
         "Routes":request.json['Routes'],
 
     }
-    bus.append(bus1)
+    bus.append(bus1)                        # appended to the ../bus page raw data
     return jsonify( {'bus':bus1 }),201
-# sample test
-# curl -i -H "Content-Type:application/json" -X POST -d '{"StopID":"12 D 1234","make":"Fiat","Name":"Punto","price":3000}' http://localhost:5000/cars
-# for windows use this one
-# curl -i -H "Content-Type:application/json" -X POST -d "{\"StopID\":\"12 D 1234\",\"make\":\"Fiat\",\"Name\":\"Punto\",\"price\":3000}" http://localhost:5000/cars
-@app.route('/bus/<string:StopID>', methods =['PUT'])
+
+
+@app.route('/bus/<string:StopID>', methods =['PUT'])   # create a function [PUT] to update the bus data in ../bus page 
 def update_bus(StopID):
     foundBus=list(filter(lambda t : t['StopID'] ==StopID, bus))
     if len(foundBus) == 0:
@@ -237,11 +235,9 @@ def update_bus(StopID):
     foundBus[0]['Name']  = request.json.get('Name', foundBus[0]['Name'])
     foundBus[0]['Routes'] =request.json.get('Routes', foundBus[0]['Routes'])
     return jsonify( {'bus':foundBus[0]})
-#curl -i -H "Content-Type:application/json" -X PUT -d '{"make":"Fiesta"}' http://localhost:5000/cars/181%20G%201234
-# for windows use this one
-#curl -i -H "Content-Type:application/json" -X PUT -d "{\"make\":\"Fiesta\"}" http://localhost:5000/cars/181%20G%201234
 
-@app.route('/bus/<string:StopID>', methods =['DELETE'])
+
+@app.route('/bus/<string:StopID>', methods =['DELETE'])   # create a function [DELETE] to delete the bus data in ../bus page 
 def delete_bus(StopID):
     foundBus = list(filter (lambda t : t['StopID'] == StopID, bus))
     if len(foundBus) == 0:
@@ -258,5 +254,5 @@ def not_found400(error):
     return make_response( jsonify( {'error':'Bad Request' }), 400)
 
 
-if __name__ == '__main__' :
+if __name__ == '__main__' :   # main method initialising the Flask app server
     app.run(debug= True)
