@@ -16,7 +16,7 @@ The purpose of the page is to 1) show the bus stops in Dublin where entries to t
 
 By running the Flask server using "python b_restserver.py" you can then access the html interface through the local port "http://127.0.0.1:5000/busviewer.html", the raw data imported from the Dublin Bus data regarding each bus stop in the network is stored here http://127.0.0.1:5000/bus while the Real Time data for the selected 3 sample bus stops is here http://127.0.0.1:5000/live, http://127.0.0.1:5000/live1, http://127.0.0.1:5000/live2. Unfortunately I couldnt get a full dump to get any user input (Bus Stop Number) so I chose 3 to display. 
 
-**In total, I have sought to complete at least the following tasks as outlined in the assignment. **
+**In total, I have sought to complete at least the following tasks as outlined in the assignment.**
 
 1. To build upon the sample labs: implement a basic Flask server that has a REST API and perform CRUD operations
 2. One database	table imported  from Dublin Bus that interact wit the web interface, using AJAX calls to perform CRUD operations
