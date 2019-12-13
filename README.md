@@ -12,7 +12,7 @@ To run this document you must have installed the followng programs:
 - software to run python code (https://www.python.org/), for example the Anaconda package (https://www.anaconda.com/. Flask should already be installed as part of Anaconda. 
 - access to a internet browser, for example Google Chrome. 
 
-The purpose of the page is to 1) show the bus stops in Dublin where entries to the list can be added to, updated or deleted, 2) retrieve live data for a select list of "favourite" 3 bus stops. Both datasets contribute to the "live data"(yellow) results <div>. 
+The purpose of the page is to 1) show the bus stops in Dublin where entries to the list can be added to, updated or deleted, 2) retrieve live data for a select list of "favourite" 3 bus stops. Both datasets contribute to the "live data"(yellow) results div. 
 
 By running the Flask server using "python b_restserver.py" you can then access the html interface through the local port "http://127.0.0.1:5000/busviewer.html", the raw data imported from the Dublin Bus data regarding each bus stop in the network is stored here http://127.0.0.1:5000/bus while the Real Time data for the selected 3 sample bus stops is here http://127.0.0.1:5000/live, http://127.0.0.1:5000/live1, http://127.0.0.1:5000/live2. Unfortunately I couldnt get a full dump to get any user input (Bus Stop Number) so I chose 3 to display. 
 
