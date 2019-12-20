@@ -11,6 +11,7 @@ To run this document you must have installed the followng programs:
 
 - software to run python code (https://www.python.org/), for example the Anaconda package (https://www.anaconda.com/. Flask should already be installed as part of Anaconda. 
 - access to a internet browser, for example Google Chrome. 
+- a list of the installations in my environment when developing the page is saved as requirements.txt.
 
 The purpose of the page is to 1) show the bus stops in Dublin where entries to the list can be added to, updated or deleted, 2) retrieve live data for a select list of "favourite" 3 bus stops. Both datasets contribute to the "live data"(yellow) results div. 
 
