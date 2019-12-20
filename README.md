@@ -1,5 +1,5 @@
 # Semester 4 DataRepresentation Project
-<img align="right" src="https://prateekvjoshi.files.wordpress.com/2014/10/1-main.png" width="500">
+<img align="right" src="http://jamesmickley.com/wordpress/wp-content/uploads/2016/07/Coding-Cartoon.gif" width="500">
 
 This repository contains DataRepresentation Project Q4 2019 (5 credits)
 
